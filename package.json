@@ -1,4 +1,5 @@
-"name": "BotdiCesco",
+{
+  "name": "BotdiCesco",
   "version": "2.2",
   "description": "Il mio bot personale",
   "main": "index.js",
@@ -14,16 +15,16 @@
     "eslint": "eslint .",
     "eslintfix": "eslint --fix ."
   },
-  "homepage": "https://github.com/MoonContent>
+  "homepage": "https://github.com/MoonContent",
   "author": {
     "name": "Cesco"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/MoonConten>
+    "url": "git+https://github.com/MoonContent"
   },
   "bugs": {
-    "url": "https://github.com/MoonContentCre>
+    "url": "https://github.com/MoonContent/issues"
   },
   "license": "GPL-3.0-or-later",
   "dependencies": {
@@ -33,10 +34,11 @@
     "@green-code/music-track-data": "^2.0.4",
     "@sasmeee/igdl": "^2.0.1",
     "@shineiichijo/marika": "^2.0.7",
-    "@vitalets/google-translate-api": "^8.0.1>
+    "@vitalets/google-translate-api": "^8.0.1",
     "node-shazam": "^1.0.0",
     "@whiskeysockets/baileys": "^6.7.3",
-    "@xct007/frieren-scraper": "^1.0.2", "acrcloud": "^1.4.1",
+    "@xct007/frieren-scraper": "^1.0.2",
+    "acrcloud": "^1.4.1",
     "api-dylux": "^1.6.3",
     "aptoide-scraper": "^1.0.2",
     "awesome-phonenumber": "^2.68.1",
@@ -73,12 +75,12 @@
     "bot",
     "discord",
     "personal"
-  ], ],
+  ],
   "contributors": [
     "Cesco <cesco@example.com>"
   ],
   "engines": {
-    "node": "^14.17.0"
+    "node": ">=14.17.0"
   },
   "os": [
     "windows",
@@ -90,8 +92,8 @@
     "arm"
   ],
   "browser": {
-    "chrome": "^100.0.0",
-    "firefox": "^90.0.0"
+    "chrome": ">=100.0.0",
+    "firefox": ">=90.0.0"
   },
   "browserslist": [
     "chrome",
