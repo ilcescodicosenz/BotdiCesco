@@ -1,6 +1,7 @@
 import { spawn } from 'child_process';
 import { join } from 'path';
 const __dirname = global.__dirname(import.meta.url);
+
 export function levelup(teks, level) {
   return new Promise(async (resolve, reject) => {
     if (!(global.support.convert || global.support.magick || global.support.gm)) return reject('Not Support!');
@@ -55,6 +56,7 @@ export function levelup(teks, level) {
     childProcess.stdout.on('data', (chunk) => bufs.push(chunk));
   });
 }
+
 export function levelupWithShadow(teks, level) {
   return new Promise(async (resolve, reject) => {
     if (!(global.support.convert || global.support.magick || global.support.gm)) return reject('Not Support!');
@@ -109,5 +111,6 @@ export function levelupWithShadow(teks, level) {
       return resolve(Buffer.concat(bufs));
     });
     childProcess.stdout.on('data', (chunk) => bufs.push(chunk));
-  });
+  });
 }
+
