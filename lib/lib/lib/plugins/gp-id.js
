@@ -1,0 +1,18 @@
+var handler = async (m, { conn, groupMetadata }) => {
+    const groupId = groupMetadata.id;
+    const responseMessage = `ⓘ 𝐋' 𝐢𝐝 𝐝𝐢 𝐪𝐮𝐞𝐬𝐭𝐨 𝐠𝐫𝐮𝐩𝐩𝐨 𝐞' ${groupId}`;
+    conn.reply(m.chat, responseMessage, m);
+}
+
+handler.command = /^(id|gpid|gcid)$/i;
+handler.group = true;
+
+handler.getGroupName = async (m, { conn, groupMetadata }) => {
+    const groupName = groupMetadata.subject;
+    const responseMessage = `📝 𝐍𝐨𝐦𝐞 𝐝𝐢 𝐪𝐮𝐞𝐬𝐭𝐨 𝐠𝐫𝐮𝐩𝐩𝐨: ${groupName}`;
+    conn.reply(m.chat, responseMessage, m);
+}
+
+handler.command = /^(id|gpid|gcid|groupname)$/i;
+
+export default handler;
