@@ -1,0 +1,60 @@
+const handler = async (m, { conn, args, participants }) => {
+    let userStats = participants.filter(p => p.id !== conn.user.jid).map(participant => {
+        const userData = global.db.data.users[participant.id];
+        return { ...userData, jid: participant.id };
+    });
+
+    const sortedStats = userStats.sort(sort('messaggi'));
+    const topCount = args[0] && args[0] > 0 ? Math.min(100, Math.max(parseInt(args[0]), 10)) : 10;
+
+    if (topCount > 100) {
+        conn.reply(m.chat, '⚠️ La classifica può mostrare al massimo 100 utenti.', m);
+        return;
+    }
+
+    const topIndex = sortedStats.indexOf(m.sender) + 1;
+    let response = '𝐂𝐥𝐚𝐬𝐬𝐢𝐟𝐢𝐜𝐚 𝐌𝐞𝐬𝐬𝐚𝐠𝐠𝐢\n';
+    response += `La tua posizione: *${topIndex}° di ${sortedStats.length}*\n`;
+
+    sortedStats.slice(0, topCount).forEach(({ jid, messaggi }, index) => {
+        response += `${getMedaglia(index + 1)} ${index + 1}° » *@${jid.split('@')[0]}*: ${messaggi} messaggi\n`;
+    });
+
+    const quotedMessage = {
+        key: {
+            participants: '0@s.whatsapp.net',
+            fromMe: false,
+            id: 'some-id'
+        },
+        message: {
+            locationMessage: {
+                name: 'Classifica Messaggi',
+                jpegThumbnail: await (await fetch('https://telegra.ph/file/b311b1ffefcc34f681e36.png')).buffer(),
+                vcard: 'BEGIN:VCARD\nVERSION:3.0\nN:;Unlimited;;;\nFN:Unlimited\nORG:Unlimited\nTITLE:\nitem1.TEL;waid=19709001746:+1 (970) 900-1746\nitem1.X-ABLabel:Unlimited\nX-WA-BIZ-DESCRIPTION:ofc\nX-WA-BIZ-NAME:Unlimited\nEND:VCARD'
+            }
+        },
+        participant: '0@s.whatsapp.net'
+    };
+
+    conn.reply(m.chat, response, quotedMessage, { mentions: sortedStats.slice(0, topCount).map(u => u.jid) });
+};
+
+handler.command = /^(top)$/i;
+handler.group = true;
+
+export default handler;
+
+function sort(field, ascending = true) {
+    if (field) {
+        return (...arr) => arr[ascending ? 1 : 0][field] - arr[!ascending ? 1 : 0][field];
+    } else {
+        return (...arr) => arr[ascending ? 1 : 0] - arr[!ascending ? 1 : 0];
+    }
+}
+
+function getMedaglia(pos) {
+    if (pos === 1) return '🥇';
+    if (pos === 2) return '🥈';
+    if (pos === 3) return '🥉';
+    return '🏅';
+}
