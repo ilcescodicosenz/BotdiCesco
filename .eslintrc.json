@@ -1,0 +1,40 @@
+const { Client, MessageMedia } = require('whatsapp-web.js');
+const qrcode = require('qrcode-terminal');
+
+const client = new Client();
+
+client.on('qr', (qr) => {
+    qrcode.generate(qr, { small: true });
+});
+
+client.on('ready', () => {
+    console.log('Client is ready!');
+});
+
+client.on('message', async (msg) => {
+    if (msg.body === '!ping') {
+        client.sendMessage(msg.from, 'Pong!');
+    }
+
+    if (msg.body === '!audio') {
+        const audio = MessageMedia.fromFilePath('./path/to/audio.mp3');
+        await client.sendMessage(msg.from, audio);
+    }
+
+    if (msg.body === '!image') {
+        const image = MessageMedia.fromFilePath('./path/to/image.jpg');
+        await client.sendMessage(msg.from, image);
+    }
+
+    if (msg.body === '!help') {
+        const helpText = 'Comandi disponibili:\n!ping - Risponde con Pong!\n!audio - Invia un file audio\n!image - Invia un\'immagine\n!info - Mostra informazioni sul bot';
+        client.sendMessage(msg.from, helpText);
+    }
+
+    if (msg.body === '!info') {
+        const infoText = 'Bot di WhatsApp realizzato utilizzando WhatsApp Web.js. Sviluppato da [tuo nome].';
+        client.sendMessage(msg.from, infoText);
+    }
+});
+
+client.initialize();
