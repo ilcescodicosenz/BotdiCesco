@@ -1,0 +1,61 @@
+conn.sendMessage(m.chat, {
+    audio: { url: vn },
+    contextInfo: {
+        "externalAdReply": {
+            "title": 'BotdiCesco',
+            "body": `=> ᴀᴜᴅɪᴏ ᴀᴜᴛᴏᴍᴀᴛɪᴄᴏ`,
+            "previewType": "PHOTO",
+            "thumbnailUrl": null,
+            "thumbnail": imgmenu,
+            "sourceUrl": `https://github.com/ilcescodicosenz/BotdiCesco`,
+            "showAdAttribution": true
+        }
+    },
+    seconds: '4556',
+    ptt: true,
+    mimetype: 'audio/mpeg',
+    fileName: `error.mp3`
+}, { quoted: m });
+
+let buttons = [
+    { buttonId: '!owner', buttonText: { displayText: 'Creador 🐢' }, type: 1 },
+    { buttonId: '!infobot', buttonText: { displayText: 'Info 📌' }, type: 1 }
+];
+
+let buttonMessage = {
+    image: imgmenu,
+    caption: text.trim(),
+    mentions: [m.sender],
+    footer: `*${greeting}*`,
+    buttons: buttons,
+    headerType: 4,
+    contextInfo: {
+        mentionedJid: [m.sender],
+        externalAdReply: {
+            showAdAttribution: true,
+            mediaType: 'VIDEO',
+            mediaUrl: 'https://pornhub.com', // Cambia l'URL per un contenuto più appropriato
+            title: 'BotdiCesco',
+            body: '🎰Cesco🎰',
+            thumbnail: miniurl,
+            sourceUrl: `https://github.com/ilcescodicosenz/BotdiCesco`
+        }
+    }
+};
+
+conn.sendMessage(m.chat, buttonMessage, { quoted: m });
+
+conn.sendFile(m.chat, stiker, 'sticker.webp', '', m, true, {
+    contextInfo: {
+        'forwardingScore': 200,
+        'isForwarded': false,
+        externalAdReply: {
+            showAdAttribution: false,
+            title: 'BotdiCesco',
+            body: `🎰Cesco🎰`,
+            mediaType: 2,
+            sourceUrl: `https://github.com/ilcescodicosenz/BotdiCesco`,
+            thumbnail: miniurl
+        }
+    }
+}, { quoted: m });
