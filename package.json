@@ -1,4 +1,8 @@
 {
+  "type": "module",
+  ...
+}
+{
   "name": "BotdiCesco",
   "version": "2.3",
   "description": "Il mio bot personale per WhatsApp",
