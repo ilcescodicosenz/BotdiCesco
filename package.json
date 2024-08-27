@@ -44,8 +44,8 @@
     "lowdb": "^3.0.1",
     "moment-timezone": "^0.5.35",
     "mongoose": "^6.3.4",
-    "node-fetch": "^2.6.1",  // Modificato per usare la versione 2.x
-    "wppconnect-team/wppconnect": "^1.8.0"
+    "node-fetch": "^2.6.1",
+    "wppconnect": "git+https://github.com/wppconnect-team/wppconnect.git" // Modificato per usare la sintassi corretta
   },
   "keywords": [
     "bot",
