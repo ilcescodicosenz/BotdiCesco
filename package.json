@@ -3,6 +3,7 @@
   "version": "2.3",
   "description": "Il mio bot personale per WhatsApp",
   "main": "index.js",
+  "private": true,
   "directories": {
     "lib": "lib",
     "src": "src",
@@ -13,7 +14,8 @@
     "test": "node test.js",
     "test2": "nodemon index.js",
     "eslint": "eslint .",
-    "eslintfix": "eslint --fix ."
+    "eslintfix": "eslint --fix .",
+    "prod": "NODE_ENV=production node index.js"
   },
   "homepage": "https://github.com/MoonContent",
   "author": {
@@ -42,7 +44,7 @@
     "lowdb": "^3.0.1",
     "moment-timezone": "^0.5.35",
     "mongoose": "^6.3.4",
-    "node-fetch": "^3.2.1",
+    "node-fetch": "^2.6.1",  // Modificato per usare la versione 2.x
     "wppconnect-team/wppconnect": "^1.8.0"
   },
   "keywords": [
