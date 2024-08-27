@@ -30,7 +30,7 @@
   },
   "license": "GPL-3.0-or-later",
   "dependencies": {
-    "@adiwajshing/keyed-db": "^0.2.5",
+    "@adiwajshing/keyed-db": "^0.2.4",
     "@bochilteam/scraper": "^4.2.5",
     "@whiskeysockets/baileys": "^6.7.3",
     "axios": "^1.1.4",
