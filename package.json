@@ -45,7 +45,7 @@
     "moment-timezone": "^0.5.35",
     "mongoose": "^6.3.4",
     "node-fetch": "^2.6.1",
-    "@wppconnect-team/wppconnect": "^1.33.0"  // Aggiunto qui
+    "@wppconnect-team/wppconnect": "^1.33.0"
   },
   "keywords": [
     "bot",
