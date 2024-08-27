@@ -55,18 +55,6 @@
   "contributors": [
     "Cesco <cesco@example.com>"
   ],
-  "engines": {
-    "node": ">=14.17.0"
-  },
-  "os": [
-    "windows",
-    "linux",
-    "darwin"
-  ],
-  "cpu": [
-    "x64",
-    "arm"
-  ],
   "browser": {
     "chrome": ">=100.0.0",
     "firefox": ">=90.0.0"
