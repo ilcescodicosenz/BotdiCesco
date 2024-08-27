@@ -11,7 +11,7 @@
   },
   "scripts": {
     "start": "node index.js",
-    "test": "node test.js",
+    "test": "node test.mjs", // Cambiato a test.mjs
     "test2": "nodemon index.js",
     "eslint": "eslint .",
     "eslintfix": "eslint --fix .",
