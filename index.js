@@ -1,81 +1,82 @@
-console.log('Preparo BotdiCesco...')
-import { join, dirname } from 'path'
-import { createRequire } from "module";
-import { fileURLToPath } from 'url'
-import { setupMaster, fork } from 'cluster'
-import { watchFile, unwatchFile } from 'fs'
-import cfonts from 'cfonts';
-import { createInterface } from 'readline'
-import yargs from 'yargs'
+console.log('Preparo BotdiCesco...');
 
-const __dirname = dirname(fileURLToPath(import.meta.url))
-const require = createRequire(__dirname) 
-const { name, author } = require(join(__dirname, './package.json')) 
-const { say } = cfonts
-const rl = createInterface(process.stdin, process.stdout)
+import { join, dirname } from 'path';
+import { createRequire } from 'module';
+import { fileURLToPath } from 'url';
+import { setupMaster, fork } from 'cluster';
+import { watchFile, unwatchFile } from 'fs';
+import cfonts from 'cfonts';
+import { createInterface } from 'readline';
+import yargs from 'yargs';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const require = createRequire(__dirname);
+const { name, author } = require(join(__dirname, './package.json'));
+const { say } = cfonts;
+const rl = createInterface(process.stdin, process.stdout);
 
 say('\nBotdiCesco\nVision', {
     font: 'block',
     align: 'center',
     color: ['cyan', 'green']
-})
+});
 
-var isRunning = false
+let isRunning = false;
 
 function start(file) {
-    if (isRunning) return
-    isRunning = true
-    let args = [join(__dirname, file), ...process.argv.slice(2)]
+    if (isRunning) return;
+    isRunning = true;
+
+    const args = [join(__dirname, file), ...process.argv.slice(2)];
 
     say('ediz dan e fab', {
         font: 'console',
         align: 'center',
         color: ['cyan', 'blue']
-    })
-  
+    });
+
     setupMaster({
         exec: args[0],
         args: args.slice(1),
-    })
+    });
 
-    let p = fork()
+    const p = fork();
     p.on('message', data => {
-        console.log('[RECEIVED]', data)
+        console.log('[RECEIVED]', data);
         switch (data) {
             case 'reset':
-                p.process.kill()
-                isRunning = false
-                start.apply(this, arguments)
-                break
+                p.process.kill();
+                isRunning = false;
+                start.apply(this, arguments);
+                break;
             case 'uptime':
-                p.send(process.uptime())
-                break 
+                p.send(process.uptime());
+                break;
         }
-    })
+    });
 
     p.on('exit', (_, code) => {
-        isRunning = false
-        console.error('Errore inaspettato', code)
+        isRunning = false;
+        console.error('Errore inaspettato', code);
 
-        p.process.kill()
-        isRunning = false
-        start.apply(this, arguments)
+        if (code !== 0) {
+            // Se il processo è terminato con errore, riavvia
+            watchFile(args[0], () => {
+                unwatchFile(args[0]);
+                start(file);
+            });
+        }
+    });
 
-        if (code === 0) return
-        watchFile(args[0], () => {
-            unwatchFile(args[0])
-            start(file)
-        })
-    })
-    
-    let opts = new Object(yargs(process.argv.slice(2)).exitProcess(false).parse())
+    const opts = new Object(yargs(process.argv.slice(2)).exitProcess(false).parse());
     if (!opts['test']) {
         if (!rl.listenerCount()) {
             rl.on('line', line => {
-                p.emit('message', line.trim())
-            })
+                p.emit('message', line.trim());
+            });
         }
     }
 }
 
-start('main.js')
+// Avvia il bot specificando il file principale
+start('main.js');
