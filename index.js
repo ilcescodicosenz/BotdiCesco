@@ -78,5 +78,5 @@ function start(file) {
     }
 }
 
-// Avvia il bot specificando il file principale
+
 start('main.js');
