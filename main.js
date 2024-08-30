@@ -6,7 +6,14 @@ import path, { join } from 'path';
 import { fileURLToPath, pathToFileURL } from 'url';
 import { platform } from 'process';
 import * as ws from 'ws';
-import { readdirSync, statSync, unlinkSync, existsSync, readFileSync, rmSync, watch } from 'fs';
+import { 
+  readdirSync, 
+  statSync, 
+  unlinkSync, 
+  existsSync, 
+  readFileSync, 
+  watch 
+} from 'fs';
 import yargs from 'yargs';
 import { spawn } from 'child_process';
 import lodash from 'lodash';
@@ -20,8 +27,16 @@ import { makeWASocket, protoType, serialize } from './lib/simple.js';
 import { Low, JSONFile } from 'lowdb';
 import { mongoDB, mongoDBV2 } from './lib/mongoDB.js';
 import store from './lib/store.js';
+
 const { proto } = (await import('@whiskeysockets/baileys')).default;
-const { DisconnectReason, useMultiFileAuthState, MessageRetryMap, fetchLatestBaileysVersion, makeCacheableSignalKeyStore, jidNormalizedUser, PHONENUMBER_MCC } = await import('@whiskeysockets/baileys');
+const { 
+  DisconnectReason, 
+  useMultiFileAuthState, 
+  fetchLatestBaileysVersion, 
+  makeCacheableSignalKeyStore, 
+  jidNormalizedUser 
+} = await import('@whiskeysockets/baileys');
+
 import readline from 'readline';
 import NodeCache from 'node-cache';
 const { CONNECTING } = ws;
@@ -32,29 +47,34 @@ protoType();
 serialize();
 
 global.__filename = function filename(pathURL = import.meta.url, rmPrefix = platform !== 'win32') {
-  return rmPrefix ? /file:\/\/\//.test(pathURL) ? fileURLToPath(pathURL) : pathURL : pathToFileURL(pathURL).toString();
+  return rmPrefix ? /file:\/\//.test(pathURL) ? fileURLToPath(pathURL) : pathURL : pathToFileURL(pathURL).toString();
 };
+
 global.__dirname = function dirname(pathURL) {
   return path.dirname(global.__filename(pathURL, true));
 };
+
 global.__require = function require(dir = import.meta.url) {
   return createRequire(dir);
 };
 
-global.API = (name, path = '/', query = {}, apikeyqueryname) => (name in global.APIs ? global.APIs[name] : name) + path + (query || apikeyqueryname ? '?' + new URLSearchParams(Object.entries({ ...query, ...(apikeyqueryname ? { [apikeyqueryname]: global.APIKeys[name in global.APIs ? global.APIs[name] : name] } : {}) })) : '');
+global.API = (name, path = '/', query = {}, apikeyqueryname) => 
+  (name in global.APIs ? global.APIs[name] : name) + path + 
+  (query || apikeyqueryname ? '?' + new URLSearchParams(Object.entries({ 
+    ...query, 
+    ...(apikeyqueryname ? { [apikeyqueryname]: global.APIKeys[name in global.APIs ? global.APIs[name] : name] } : {}) 
+  })) : '');
 
 global.timestamp = { start: new Date };
 global.videoList = [];
 global.videoListXXX = [];
-
 const __dirname = global.__dirname(import.meta.url);
-
 global.opts = new Object(yargs(process.argv.slice(2)).exitProcess(false).parse());
 global.prefix = new RegExp('^[' + (opts['prefix'] || '*/i!#$%+£¢€¥^°=¶∆×÷π√✓©®:;?&.\\-.@').replace(/[|\\{}()[\]^$+*?.\-\^]/g, '\\$&') + ']');
 
 global.db = new Low(/https?:\/\//.test(opts['db'] || '') ? new cloudDBAdapter(opts['db']) : new JSONFile(`${opts._[0] ? opts._[0] + '_' : ''}database.json`));
-
 global.DATABASE = global.db;
+
 global.loadDatabase = async function loadDatabase() {
   if (global.db.READ) {
     return new Promise((resolve) => setInterval(async function () {
@@ -79,6 +99,7 @@ global.loadDatabase = async function loadDatabase() {
   };
   global.db.chain = chain(global.db.data);
 };
+
 loadDatabase();
 
 global.chatgpt = new Low(new JSONFile(path.join(__dirname, '/db/chatgpt.json')));
@@ -102,10 +123,11 @@ global.loadChatgptDB = async function loadChatgptDB() {
   };
   global.chatgpt.chain = lodash.chain(global.chatgpt.data);
 };
+
 loadChatgptDB();
 
 global.authFile = `Sessioni`;
-const { state, saveState, saveCreds } = await useMultiFileAuthState(global.authFile);
+const { state, saveCreds } = await useMultiFileAuthState(global.authFile);
 const msgRetryCounterCache = new NodeCache();
 const { version } = await fetchLatestBaileysVersion();
 let phoneNumber = global.botnumber;
@@ -120,6 +142,7 @@ let opcion;
 if (methodCodeQR) {
   opcion = '1';
 }
+
 if (!methodCodeQR && !methodCode && !fs.existsSync(`./${authFile}/creds.json`)) {
   do {
     opcion = await question(chalk.greenBright(`🤖 𝐒𝐞𝐥𝐞𝐳𝐢𝐨𝐧𝐚 𝐮𝐧𝐚 𝐨𝐩𝐳𝐢𝐨𝐧𝐞 𝐩𝐞𝐫 𝐜𝐨𝐥𝐥𝐞𝐠𝐚𝐫𝐞 𝐢𝐥 𝐭𝐮𝐨 𝐛𝐨𝐭 :\n1. 𝐓𝐫𝐚𝐦𝐢𝐭𝐞 𝐐𝐑\n2. 𝐓𝐫𝐚𝐦𝐢𝐭𝐞 𝐜𝐨𝐝𝐢𝐜𝐞 𝐚 𝟖 𝐜𝐢𝐟𝐫𝐞 \n---> `));
@@ -131,13 +154,13 @@ if (!methodCodeQR && !methodCode && !fs.existsSync(`./${authFile}/creds.json`)) 
 
 console.info = () => {};
 const connectionOptions = {
-  logger: pino({ level: 'silent' }),
+  logger: P({ level: 'silent' }),
   printQRInTerminal: opcion == '1' ? true : methodCodeQR ? true : false,
   mobile: MethodMobile,
   browser: opcion == '1' ? ['BotdiCesco-𝐁𝐨𝐭-𝐌𝐝 𝟐.𝟎', 'Safari', '2.0.0'] : methodCodeQR ? ['BotdiCesco-𝐁𝐨𝐭-𝐌𝐝 𝟐.𝟎', 'Safari', '2.0.0'] : ['Ubuntu', 'Chrome', '110.0.5585.95'],
   auth: {
     creds: state.creds,
-    keys: makeCacheableSignalKeyStore(state.keys, Pino({ level: "fatal" }).child({ level: "fatal" })),
+    keys: makeCacheableSignalKeyStore(state.keys, P({ level: "fatal" }).child({ level: "fatal" })),
   },
   markOnlineOnConnect: true,
   generateHighQualityLinkPreview: true,
@@ -200,7 +223,7 @@ if (!opts['test']) {
     setInterval(async () => {
       if (global.db.data) await global.db.write();
       if (opts['autocleartmp'] && (global.support || {}).find) {
-        const tmp = [os.tmpdir(), 'tmp', 'jadibts'];
+        const tmp = [tmpdir(), 'tmp', 'jadibts'];
         tmp.forEach((filename) => spawn('find', [filename, '-amin', '3', '-type', 'f', '-delete']));
       }
     }, 10 * 1000);
@@ -215,7 +238,7 @@ function clearTmp() {
   tmp.forEach((dirname) => readdirSync(dirname).forEach((file) => filename.push(join(dirname, file))));
   return filename.map((file) => {
     const stats = statSync(file);
-    if (stats.isFile() && (Date.now() - stats.mtimeMs >= 1000 * 60 * 3)) return unlinkSync(file); // 3 minutes
+    if (stats.isFile() && (Date.now() - stats.mtimeMs >= 1000 * 60 * 3)) return unlinkSync(file);
     return false;
   });
 }
@@ -223,13 +246,9 @@ function clearTmp() {
 function purgeSession() {
   let prekey = [];
   let directorio = readdirSync("./Sessioni");
-  let filesFolderPreKeys = directorio.filter(file => {
-    return file.startsWith('pre-key-');
-  });
+  let filesFolderPreKeys = directorio.filter(file => file.startsWith('pre-key-'));
   prekey = [...prekey, ...filesFolderPreKeys];
-  filesFolderPreKeys.forEach(files => {
-    unlinkSync(`./Sessioni/${files}`);
-  });
+  filesFolderPreKeys.forEach(files => unlinkSync(`./Sessioni/${files}`));
 }
 
 function purgeSessionSB() {
@@ -238,13 +257,9 @@ function purgeSessionSB() {
     let SBprekey = [];
     listaDirectorios.forEach(directorio => {
       if (statSync(`./jadibts/${directorio}`).isDirectory()) {
-        let DSBPreKeys = readdirSync(`./jadibts/${directorio}`).filter(fileInDir => {
-          return fileInDir.startsWith('pre-key-');
-        });
+        let DSBPreKeys = readdirSync(`./jadibts/${directorio}`).filter(fileInDir => fileInDir.startsWith('pre-key-'));
         SBprekey = [...SBprekey, ...DSBPreKeys];
-        DSBPreKeys.forEach(fileInDir => {
-          unlinkSync(`./jadibts/${directorio}/${fileInDir}`);
-        });
+        DSBPreKeys.forEach(fileInDir => unlinkSync(`./jadibts/${directorio}/${fileInDir}`));
       }
     });
     if (SBprekey.length === 0) return;
@@ -266,7 +281,7 @@ function purgeOldFiles() {
           if (stats.isFile() && stats.mtimeMs < oneHourAgo && file !== 'creds.json') {
             unlinkSync(filePath, err => {
               if (err) throw err;
-              console.log(chalk.bold.green(`Archivo ${file} borrado con successo`));
+              console.log(chalk.bold.green(`Archivo ${file} borrado con sucesso`));
             });
           } else {
             console.log(chalk.bold.red(`Archivo ${file} non cancellato`));
@@ -299,7 +314,7 @@ async function connectionUpdate(update) {
   let reason = new Boom(lastDisconnect?.error)?.output?.statusCode;
   if (reason == 405) {
     await fs.unlinkSync("./Sessioni/" + "creds.json");
-    console.log(chalk.bold.redBright(`[ ⚠️ ] 𝐂𝐨𝐧𝐧𝐞𝐬𝐬𝐢𝐨𝐧𝐞 𝐬𝐨𝐬𝐭𝐢𝐭𝐮𝐢𝐭𝐚, 𝐫𝐢𝐚𝐯𝐯𝐢𝐨 𝐢𝐧 𝐜𝐨𝐫𝐬𝐨...\n𝐒𝐞 𝐚𝐩𝐩𝐚𝐫𝐞 𝐮𝐧 𝐞𝐫𝐫𝐨𝐫𝐞, 𝐫𝐢𝐜𝐨𝐦𝐢𝐧𝐜𝐢𝐚 𝐜𝐨𝐧: 𝐧𝐩𝐦 𝐬𝐭𝐚𝐫𝐭`));
+    console.log(chalk.bold.redBright(`[ ⚠️ ] 𝐂𝐨𝐧𝐧𝐞𝐬𝐬𝐢𝐨𝐧𝐞 𝐬𝐨𝐬𝐭𝐢𝐭𝐮𝐭𝐚, 𝐫𝐢𝐚𝐯𝐯𝐢𝐨 𝐢𝐧 𝐜𝐨𝐫𝐬𝐨...\n𝐒𝐞 𝐚𝐩𝐩𝐚𝐫𝐞 𝐮𝐧 𝐞𝐫𝐫𝐨𝐫𝐞, 𝐫𝐢𝐜𝐨𝐦𝐢𝐧𝐜𝐢𝐚 𝐜𝐨𝐧: 𝐧𝐩𝐦 𝐬𝐭𝐚𝐫𝐭`));
     process.send('reset');
   }
   if (connection === 'close') {
@@ -322,7 +337,7 @@ async function connectionUpdate(update) {
       conn.logger.warn(`[ ⚠️ ] 𝐂𝐨𝐧𝐧𝐞𝐬𝐬𝐢𝐨𝐧𝐞 𝐬𝐜𝐚𝐝𝐮𝐭𝐚, 𝐫𝐢𝐜𝐨𝐧𝐧𝐞𝐬𝐬𝐢𝐨𝐧𝐞 𝐢𝐧 𝐜𝐨𝐫𝐬𝐨...`);
       await global.reloadHandler(true).catch(console.error);
     } else {
-      conn.logger.warn(`[ ⚠️ ] 𝐌𝐨𝐭𝐢𝐯𝐨 𝐝𝐞𝐥𝐥𝐚 𝐝𝐢𝐬𝐜𝐨𝐧𝐧𝐞𝐬𝐬𝐢𝐨𝐧𝐞 𝐬𝐨𝐜𝐨𝐧𝐨𝐬𝐜𝐢𝐮𝐭𝐨. 𝐕𝐞𝐫𝐢𝐟𝐢𝐜𝐚 𝐬𝐞 𝐢𝐥 𝐭𝐮𝐨 𝐧𝐮𝐦𝐞𝐫𝐨 𝐞' 𝐢𝐧 𝐛𝐚𝐧. ${reason || ''}: ${connection || ''}`);
+      conn.logger.warn(`[ ⚠️ ] 𝐌𝐨𝐭𝐢𝐯𝐨 𝐝𝐞𝐥𝐥𝐚 𝐝𝐢𝐬𝐜𝐨𝐧𝐧𝐞𝐬𝐬𝐢𝐨𝐧𝐞 𝐬𝐨𝐜𝐨𝐧𝐨𝐬𝐜𝐢𝐨𝐭𝐨. 𝐕𝐞𝐫𝐢𝐟𝐢𝐜𝐚 𝐬𝐞 𝐢𝐥 𝐭𝐮𝐨 𝐧𝐮𝐦𝐞𝐫𝐨 𝐞' 𝐢𝐧 𝐛𝐚𝐧. ${reason || ''}: ${connection || ''}`);
       await global.reloadHandler(true).catch(console.error);
     }
   }
@@ -387,6 +402,7 @@ global.reloadHandler = async function (restatConn) {
 const pluginFolder = global.__dirname(join(__dirname, './plugins/index'));
 const pluginFilter = (filename) => /\.js$/.test(filename);
 global.plugins = {};
+
 async function filesInit() {
   for (const filename of readdirSync(pluginFolder).filter(pluginFilter)) {
     try {
@@ -411,6 +427,7 @@ global.reload = async (_ev, filename) => {
         return delete global.plugins[filename];
       }
     } else conn.logger.info(`new plugin - '${filename}'`);
+    
     const err = syntaxerror(readFileSync(dir), filename, {
       sourceType: 'module',
       allowAwaitOutsideFunction: true,
@@ -428,6 +445,7 @@ global.reload = async (_ev, filename) => {
     }
   }
 };
+
 Object.freeze(global.reload);
 watch(pluginFolder, global.reload);
 await global.reloadHandler();
@@ -454,19 +472,19 @@ setInterval(async () => {
 setInterval(async () => {
   if (global.stopped === 'close' || !global.conn || !global.conn.user) return;
   await purgeSession();
-  console.log(chalk.cyanBright(`\n╭─────────────────···\n│ 𝐀𝐔𝐓𝐎 𝐄𝐋𝐈𝐌𝐈𝐍𝐀𝐙𝐈𝐎𝐍𝐄 𝐒𝐄𝐒𝐒𝐈𝐎𝐍𝐈\n│ ⓘ 𝐀𝐫𝐜𝐡𝐢𝐯𝐢 𝐞𝐥𝐢𝐦𝐢𝐧𝐚𝐭𝐢 𝐜𝐨𝐧 𝐬𝐮𝐜𝐜𝐞𝐬𝐬𝐨. ✅\n╰─────────────···`));
+  console.log(chalk.cyanBright(`\n╭─────────────────···\n│ 𝐀𝐔𝐓𝐎 𝐄𝐋𝐈𝐌𝐈𝐍𝐀𝐓𝐈𝐎𝐍𝐄 𝐒𝐄𝐒𝐒𝐈𝐎𝐍𝐈\n│ ⓘ 𝐀𝐫𝐜𝐡𝐢𝐯𝐢 𝐞𝐥𝐢𝐦𝐢𝐧𝐚𝐭𝐢 𝐜𝐨𝐧 𝐬𝐮𝐜𝐜𝐞𝐬𝐬𝐨. ✅\n╰─────────────···`));
 }, 1000 * 60 * 60);
 
 setInterval(async () => {
   if (global.stopped === 'close' || !global.conn || !global.conn.user) return;
   await purgeSessionSB();
-  console.log(chalk.cyanBright(`\n╭─────────────────···\n│ 𝐀𝐔𝐓𝐎 𝐄𝐋𝐈𝐌𝐈𝐍𝐀𝐙𝐈𝐎𝐍𝐄 𝐒𝐄𝐒𝐒𝐈𝐎𝐍𝐈 𝐒𝐔𝐁-𝐁𝐎𝐓𝐒\n│ ⓘ 𝐀𝐫𝐜𝐡𝐢𝐯𝐢 𝐞𝐥𝐢𝐦𝐢𝐧𝐚𝐭𝐢 𝐜𝐨𝐧 𝐬𝐮𝐜𝐜𝐞𝐬𝐬𝐨. ✅\n╰─────────────···`));
+  console.log(chalk.cyanBright(`\n╭─────────────────···\n│ 𝐀𝐔𝐓𝐎 𝐄𝐋𝐈𝐌𝐈𝐍𝐀𝐓𝐈𝐎𝐍𝐄 𝐒𝐄𝐒𝐒𝐈𝐎𝐍𝐈 𝐒𝐔𝐁-𝐁𝐎𝐓𝐒\n│ ⓘ 𝐀𝐫𝐜𝐡𝐢𝐯𝐢 𝐞𝐥𝐢𝐦𝐢𝐧𝐚𝐭𝐢 𝐜𝐨𝐧 𝐬𝐮𝐜𝐜𝐞𝐬𝐬𝐨. ✅\n╰─────────────···`));
 }, 1000 * 60 * 60);
 
 setInterval(async () => {
   if (global.stopped === 'close' || !global.conn || !global.conn.user) return;
   await purgeOldFiles();
-  console.log(chalk.cyanBright(`\n╭─────────────────\n│ 𝐀𝐔𝐓𝐎 𝐄𝐋𝐈𝐌𝐈𝐍𝐀𝐙𝐈𝐎𝐍𝐄 𝐎𝐋𝐃𝐅𝐈𝐋𝐄𝐒\n│ ⓘ 𝐀𝐫𝐜𝐡𝐢𝐯𝐢 𝐞𝐥𝐢𝐦𝐢𝐧𝐚𝐭𝐢 𝐜𝐨𝐧 𝐬𝐮𝐜𝐜𝐞𝐬𝐬𝐨. ✅\n╰─────────────···`));
+  console.log(chalk.cyanBright(`\n╭─────────────────\n│ 𝐀𝐔𝐓𝐎 𝐄𝐋𝐈𝐌𝐈𝐍𝐀𝐓𝐈𝐎𝐍𝐄 𝐎𝐋𝐃𝐅𝐈𝐋𝐄𝐒\n│ ⓘ 𝐀𝐫𝐜𝐡𝐢𝐯𝐢 𝐞𝐥𝐢𝐦𝐢𝐧𝐚𝐭𝐢 𝐜𝐨𝐧 𝐬𝐮𝐜𝐜𝐞𝐬𝐬𝐨. ✅\n╰─────────────···`));
 }, 1000 * 60 * 60);
 
 setInterval(async () => {
