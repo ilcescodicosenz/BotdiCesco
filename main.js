@@ -23,19 +23,13 @@ import { tmpdir } from 'os';
 import { format } from 'util';
 import P from 'pino';
 import { Boom } from '@hapi/boom';
-import { makeWASocket, protoType, serialize } from './lib/simple.js';
+import { makeWASocket, protoType, serialize, useMultiFileAuthState, fetchLatestBaileysVersion, makeCacheableSignalKeyStore, jidNormalizedUser } from './lib/simple.js';
 import { Low, JSONFile } from 'lowdb';
 import { mongoDB, mongoDBV2 } from './lib/mongoDB.js';
 import store from './lib/store.js';
 
 const { proto } = (await import('@whiskeysockets/baileys')).default;
-const { 
-  DisconnectReason, 
-  useMultiFileAuthState, 
-  fetchLatestBaileysVersion, 
-  makeCacheableSignalKeyStore, 
-  jidNormalizedUser 
-} = await import('@whiskeysockets/baileys');
+const { DisconnectReason } = await import('@whiskeysockets/baileys');
 
 import readline from 'readline';
 import NodeCache from 'node-cache';
@@ -207,7 +201,7 @@ if (!fs.existsSync(`./${authFile}/creds.json`)) {
       setTimeout(async () => {
         let codigo = await conn.requestPairingCode(numeroTelefono);
         codigo = codigo?.match(/.{1,4}/g)?.join("-") || codigo;
-        console.log(chalk.yellowBright('🤖 𝐂𝐨𝐥𝐥𝐞𝐠𝐚 𝐢𝐥 𝐭𝐮𝐨 𝐛𝐨𝐭...'));
+        console.log(chalk.yellowBright('🤖 𝐂𝐨𝐥𝐥𝐞𝐠𝐚 𝐢𝐥 𝐭𝐔𝐨 𝐛𝐨𝐭...'));
         console.log(chalk.black(chalk.bgCyanBright(`𝐈𝐍𝐒𝐄𝐑𝐈𝐒𝐂𝐈 𝐐𝐔𝐄𝐒𝐓𝐎 𝐂𝐎𝐃𝐈𝐂𝐄:`)), chalk.black(chalk.bgGreenBright(codigo)));
       }, 3000);
     }
@@ -331,7 +325,7 @@ async function connectionUpdate(update) {
     } else if (reason === DisconnectReason.loggedOut) {
       conn.logger.error(`[ ⚠️ ] 𝐂𝐨𝐧𝐧𝐞𝐬𝐬𝐢𝐨𝐧𝐞 𝐜𝐡𝐢𝐮𝐬𝐚, 𝐞𝐥𝐢𝐦𝐢𝐧𝐚 𝐥𝐚 𝐜𝐚𝐫𝐭𝐞𝐥𝐥𝐚 ${global.authFile} 𝐞𝐝 𝐞𝐬𝐞𝐠𝐮𝐢 𝐧𝐮𝐨𝐯𝐚𝐦𝐞𝐧𝐭𝐞 𝐥𝐚 𝐬𝐜𝐚𝐧𝐬𝐢𝐨𝐧𝐞.`);
     } else if (reason === DisconnectReason.restartRequired) {
-      conn.logger.info(`[ ⚠️ ] 𝐑𝐢𝐚𝐯𝐯𝐢𝐨 𝐫𝐢𝐜𝐡𝐢𝐞𝐬𝐭𝐨, 𝐫𝐢𝐚𝐯𝐯𝐢𝐚𝐫𝐞 𝐢𝐥 𝐬𝐞𝐫𝐯𝐞𝐫 𝐢𝐧 𝐜𝐚𝐬𝐨 𝐝𝐢 𝐩𝐫𝐨𝐛𝐥𝐞𝐦𝐢.`);
+      conn.logger.info(`[ ⚠️ ] 𝐑𝐢𝐚𝐯𝐯𝐢𝐚𝐫𝐞 𝐫𝐢𝐜𝐡𝐢𝐞𝐬𝐭𝐨, 𝐫𝐢𝐚𝐯𝐯𝐢𝐚𝐫𝐞 𝐢𝐥 𝐬𝐞𝐫𝐯𝐞𝐫 𝐢𝐧 𝐜𝐚𝐬𝐨 𝐝𝐢 𝐩𝐫𝐨𝐛𝐥𝐞𝐦𝐢.`);
       await global.reloadHandler(true).catch(console.error);
     } else if (reason === DisconnectReason.timedOut) {
       conn.logger.warn(`[ ⚠️ ] 𝐂𝐨𝐧𝐧𝐞𝐬𝐬𝐢𝐨𝐧𝐞 𝐬𝐜𝐚𝐝𝐮𝐭𝐚, 𝐫𝐢𝐜𝐨𝐧𝐧𝐞𝐬𝐬𝐢𝐨𝐧𝐞 𝐢𝐧 𝐜𝐨𝐫𝐬𝐨...`);
