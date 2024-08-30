@@ -2,7 +2,7 @@
   "name": "BotdiCesco",
   "version": "2.3",
   "description": "Il mio bot personale per WhatsApp",
-  "main": "index.js",
+  "main": "main.js",
   "private": true,
   "directories": {
     "lib": "lib",
@@ -10,12 +10,12 @@
     "plugins": "plugins"
   },
   "scripts": {
-    "start": "node index.js",
+    "start": "node main.js",
     "test": "node test.mjs", 
-    "test2": "nodemon index.js",
+    "test2": "nodemon main.js",
     "eslint": "eslint .",
     "eslintfix": "eslint --fix .",
-    "prod": "NODE_ENV=production node index.js"
+    "prod": "NODE_ENV=production node main.js"
   },
   "homepage": "https://github.com/MoonContent",
   "author": {
